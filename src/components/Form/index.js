@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, TextInput, View, TouchableOpacity } from "react-native";
+import { Text, TextInput, View, TouchableOpacity, Vibration, Keyboard, Pressable } from "react-native";
 import ResultImc from "./ResultImc";
 import styles from "./style";
 
@@ -13,11 +13,13 @@ export default function Form() {
     const [errorMessage, setErrorMessage] = useState(null)
 
     function imcCalculator() {
-        return setImc((weight/(height*height)).toFixed(2))
+        let heightFormat = height.replace(',','.')
+        return setImc((weight/(heightFormat*heightFormat)).toFixed(2))
     }
 
     function verificationImc() {
         if (imc == null) {
+            Vibration.vibrate()
             setErrorMessage('campo obrigatório*')
         }
     }
@@ -39,11 +41,11 @@ export default function Form() {
     }
 
     return (
-        <View style={styles.formContext}>
+        <Pressable onPress={Keyboard.dismiss} style={styles.formContext}>
             <View style={styles.form}>
                 
                 <Text style={styles.formLabel}>Altura</Text>
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
+                {height == null ? <Text style={styles.errorMessage}>{errorMessage}</Text> : <Text/>}
                 <TextInput
                     style={styles.input}
                     onChangeText={setHeight}
@@ -53,7 +55,7 @@ export default function Form() {
                 />
                 
                 <Text style={styles.formLabel}>Peso</Text>
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
+                {weight == null ? <Text style={styles.errorMessage}>{errorMessage}</Text> : <Text/>}
                 <TextInput
                     style={styles.input}
                     onChangeText={setWeight}
@@ -71,6 +73,6 @@ export default function Form() {
                 
             </View>
             <ResultImc messageResultImc={messageImc} resultImc={imc} />
-        </View>
+        </Pressable>
     );
 }
